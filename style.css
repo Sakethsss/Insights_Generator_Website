@@ -1,0 +1,26 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    text-align: center;
+}
+
+#columnHeadings {
+    margin-top: 20px;
+}
+
+#insightsGraph {
+    margin-top: 20px;
+}
+#csvFileInput {
+    display: block;
+    margin: 10 auto;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
