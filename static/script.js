@@ -39,5 +39,20 @@ function generateInsights() {
         return;
     }
     // Make AJAX request to Flask backend with selected parameters
+    const xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+                const response = JSON.parse(xhr.responseText);
+                document.getElementById('insightsGraph').innerHTML = '<img src="' + response.graph_url + '" alt="Insights Graph">';
+            } else {
+                alert('Error generating insights.');
+            }
+        }
+    };
     // Update insightsGraph with the generated insights
+    xhr.open('POST', '/');
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send(JSON.stringify({ firstParameter: firstParameter, secondParameter: secondParameter }));
 }
+

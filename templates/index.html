@@ -19,7 +19,11 @@
     <label for="secondParameter">Select Second Parameter:</label>
     <select id="secondParameter"></select>
     <button onclick="generateInsights()">Generate Insights</button>
-    <div id="insightsGraph"></div>
+    <div id="insightsGraph">
+        {% if graph_path %}
+        <img src="{{ graph_path }}" alt="Insights Graph">
+        {% endif %}
+    </div>
 </body>
 </html> 
 
