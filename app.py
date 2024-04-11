@@ -1,3 +1,4 @@
+import datetime
 from flask import Flask, request, render_template, send_from_directory,jsonify
 import csv
 import os
@@ -35,10 +36,14 @@ def generate_insights_graph(filename, x_param, y_param):
     # Get the absolute path to the directory where app.py is located
     script_dir = os.path.dirname(os.path.abspath(__file__))
     # Save the graph in a subdirectory within the script directory
-    graph_path = os.path.join(script_dir, 'static', 'insights_graph.png')
+    graph_path = os.path.join('/static/graphs', generate_unique_filename('insights_graph.png'))
     plt.savefig(graph_path)
     plt.close()
     return graph_path
+
+# Function to generate unique filename
+def generate_unique_filename(filename):
+    return f"{filename.split('.')[0]}_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.png"
 
 @app.route('/static/<path:path>')
 def send_static(path):
