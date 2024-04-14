@@ -9,26 +9,60 @@
 </head>
 <body>
     <h1>Insights Generator</h1>
-    <form action="/" method="post" enctype="multipart/form-data">
-        <input type="file" id="csvFileInput" accept=".csv" required class="csvFileInput">
+    <form id="uploadForm" action="/" method="post" enctype="multipart/form-data">
+        <input type="file" id="csvFileInput" name="file" accept=".csv" required class="csvFileInput">
+        <label for="firstParameter">Select First Parameter:</label>
+        <select id="firstParameter" name="firstParameter"></select>
+        <label for="secondParameter">Select Second Parameter:</label>
+        <select id="secondParameter" name="secondParameter"></select>
+        <button type="button" onclick="generateInsights()">Generate Insights</button>
     </form>
-    <div id="columnHeadings"></div>
-    <label for="firstParameter">Select First Parameter:</label>
-    <select id="firstParameter"></select>
-    <label for="secondParameter">Select Second Parameter:</label>
-    <select id="secondParameter"></select>
-    <button onclick="generateInsights()">Generate Insights</button>
+    
     
     <!-- Handle error feedback from Flask -->
     <div id="insightsError"></div>
     
     <!-- Update graph display logic -->
-    <div id="insightsGraph">
-        {% if graph_path %}
-            <img src="{{ graph_path }}" alt="Insights Graph">
-            {% elif status_code == 400 %}
-            <p id="error-message">Error generating insights. Please try again.</p>
-        {% endif %}
-    </div>
+    <div id="insightsGraph"></div>
+
+    <script>
+        document.getElementById('csvFileInput').addEventListener('change', processFile);
+
+        function processFile() {
+            const file = document.getElementById('csvFileInput').files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = e.target.result.split('\n');
+                const columnHeadings = data[0].split(',');
+                const firstParameterSelect = document.getElementById('firstParameter');
+                const secondParameterSelect = document.getElementById('secondParameter');
+                columnHeadings.forEach(function(heading) {
+                    firstParameterSelect.innerHTML += '<option value="' + heading + '">' + heading + '</option>';
+                    secondParameterSelect.innerHTML += '<option value="' + heading + '">' + heading + '</option>';
+                });
+            };
+            reader.readAsText(file);
+        }
+
+        function generateInsights() {
+            const formData = new FormData(document.getElementById('uploadForm'));
+            const xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        const response = JSON.parse(xhr.responseText);
+                        const graphUrl = response.graph_url;
+                        document.getElementById('insightsGraph').innerHTML = '<img src="' + graphUrl + '" alt="Insights Graph">';
+                        // Add download link for the insights graph
+                        document.getElementById('insightsGraph').innerHTML += '<br><a href="/download_insights' + graphUrl.split('/').pop() + '">Download Insights Graph</a>';
+                    } else {
+                        alert('Error generating insights.');
+                    }
+                }
+            };
+            xhr.open('POST', '/');
+            xhr.send(formData);
+        }
+    </script>
 </body>
 </html>

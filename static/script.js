@@ -31,28 +31,21 @@ function processFile() {
 }
 
 function generateInsights() {
-    const firstParameter = document.getElementById('firstParameter').value;
-    const secondParameter = document.getElementById('secondParameter').value;
-  
-    if (firstParameter === secondParameter) {
-        alert('Please select two different parameters.');
-        return;
-    }
-    // Make AJAX request to Flask backend with selected parameters
+    const formData = new FormData(document.getElementById('uploadForm'));
     const xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === 200) {
                 const response = JSON.parse(xhr.responseText);
-                document.getElementById('insightsGraph').innerHTML = '<img src="' + response.graph_url + '" alt="Insights Graph">';
+                const graphUrl = response.graph_url;
+                document.getElementById('insightsGraph').innerHTML = '<img src="' + graphUrl + '" alt="Insights Graph">';
+                // Add download link for the insights graph
+                document.getElementById('insightsGraph').innerHTML += '<br><a href="/download_insights/' + graphUrl.split('/').pop() + '">Download Insights Graph</a>';
             } else {
                 alert('Error generating insights.');
             }
         }
     };
-    // Update insightsGraph with the generated insights
     xhr.open('POST', '/');
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.send(JSON.stringify({ firstParameter: firstParameter, secondParameter: secondParameter }));
+    xhr.send(formData);
 }
-
