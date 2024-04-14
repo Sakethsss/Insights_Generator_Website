@@ -1,6 +1,5 @@
 import datetime
-from flask import Flask, request, render_template, send_from_directory,jsonify
-import csv
+from flask import Flask, request, render_template, send_from_directory, jsonify
 import os
 import pandas as pd
 from werkzeug.utils import secure_filename
@@ -8,7 +7,7 @@ import matplotlib.pyplot as plt
 
 app = Flask(__name__, static_url_path='/static')
 
-@app.route('/', methods=['get', 'post'])
+@app.route('/', methods=['GET', 'POST'])
 def home():
     if request.method == 'POST':
         # Check if the POST request has the file part
@@ -54,7 +53,6 @@ def generate_insights_graph(filename, x_param, y_param):
     plt.close()
     return graph_path
 
-# Function to generate unique filename
 def generate_unique_filename(filename):
     return f"{filename.split('.')[0]}_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.png"
 
@@ -62,7 +60,5 @@ def generate_unique_filename(filename):
 def send_static(path):
     return send_from_directory('static', path)
 
-
 if __name__ == '__main__':
     app.run(host="localhost", port=5000)
-

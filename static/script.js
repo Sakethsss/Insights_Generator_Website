@@ -8,29 +8,33 @@ function processFile() {
     reader.onload = function(e) {
         const data = e.target.result.split('\n');
         const columnHeadings = data[0].split(',');
-        const columnHeadingsElement = document.getElementById('columnHeadings');
-        columnHeadingsElement.innerHTML = '';
-        const listContainer = document.createElement('ul');
-        columnHeadings.forEach(function(heading) {
-            const listItem = document.createElement('li');
-            listItem.textContent = heading;
-            listItem.style.border = '1px solid black';
-            listItem.style.padding = '3px 5px';
-            listItem.style.fontSize = '12px';
-            listContainer.appendChild(listItem);
-        });
-        columnHeadingsElement.appendChild(listContainer);
         const firstParameterSelect = document.getElementById('firstParameter');
         const secondParameterSelect = document.getElementById('secondParameter');
+        // Clear existing options
+        firstParameterSelect.innerHTML = '';
+        secondParameterSelect.innerHTML = '';
+        // Populate dropdown menus
         columnHeadings.forEach(function(heading) {
-            firstParameterSelect.innerHTML += '<option value="' + heading + '">' + heading + '</option>';
-            secondParameterSelect.innerHTML += '<option value="' + heading + '">' + heading + '</option>';
+            const option = document.createElement('option');
+            option.value = heading;
+            option.textContent = heading;
+            firstParameterSelect.appendChild(option.cloneNode(true));
+            secondParameterSelect.appendChild(option);
         });
     };
     reader.readAsText(file);
 }
 
+
 function generateInsights() {
+    const firstParameter = document.getElementById('firstParameter').value;
+    const secondParameter = document.getElementById('secondParameter').value;
+    
+    if (firstParameter === secondParameter) {
+        alert('Please select two different parameters.');
+        return;
+    }
+
     const formData = new FormData(document.getElementById('uploadForm'));
     const xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
@@ -40,7 +44,11 @@ function generateInsights() {
                 const graphUrl = response.graph_url;
                 document.getElementById('insightsGraph').innerHTML = '<img src="' + graphUrl + '" alt="Insights Graph">';
                 // Add download link for the insights graph
-                document.getElementById('insightsGraph').innerHTML += '<br><a href="/download_insights/' + graphUrl.split('/').pop() + '">Download Insights Graph</a>';
+                const downloadLink = document.createElement('a');
+                downloadLink.href = graphUrl;
+                downloadLink.download = 'insights_graph.png';
+                downloadLink.textContent = 'Download Insights Graph';
+                document.getElementById('insightsGraph').appendChild(downloadLink);
             } else {
                 alert('Error generating insights.');
             }
@@ -49,3 +57,4 @@ function generateInsights() {
     xhr.open('POST', '/');
     xhr.send(formData);
 }
+
