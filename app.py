@@ -11,15 +11,29 @@ app = Flask(__name__, static_url_path='/static')
 @app.route('/', methods=['get', 'post'])
 def home():
     if request.method == 'POST':
-        f = request.files['file']
-        filename = secure_filename(f.filename)
-        f.save(os.path.join('static', filename))
-        # Get selected parameters from the form
-        x_param = request.form['firstParameter']
-        y_param = request.form['secondParameter']
-       # Generate insights graph
-        graph_path = generate_insights_graph(os.path.join('static', filename), x_param, y_param)
-        return jsonify({'graph_url': graph_path})
+        # Check if the POST request has the file part
+        if 'file' not in request.files:
+            return jsonify({'error': 'No file part'})
+
+        file = request.files['file']
+        # If user does not select file, browser also
+        # submit an empty part without filename
+        if file.filename == '':
+            return jsonify({'error': 'No selected file'})
+
+        if file:
+            filename = secure_filename(file.filename)
+            file_path = os.path.join('static', filename)
+            file.save(file_path)
+
+            # Get selected parameters from the form
+            x_param = request.form['firstParameter']
+            y_param = request.form['secondParameter']
+
+            # Generate insights graph
+            graph_path = generate_insights_graph(file_path, x_param, y_param)
+            return jsonify({'graph_url': graph_path})
+
     return render_template('index.html')
 
 def generate_insights_graph(filename, x_param, y_param):
@@ -33,10 +47,9 @@ def generate_insights_graph(filename, x_param, y_param):
     plt.ylabel(y_param)
     plt.title(f'Average {y_param} by {x_param}')
     plt.grid(True)
-    # Get the absolute path to the directory where app.py is located
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    # Save the graph in a subdirectory within the script directory
-    graph_path = os.path.join('/static/graphs', generate_unique_filename('insights_graph.png'))
+    # Save the graph directly in the static directory
+    graph_filename = generate_unique_filename('insights_graph.png')
+    graph_path = os.path.join('static', graph_filename)
     plt.savefig(graph_path)
     plt.close()
     return graph_path
@@ -51,5 +64,5 @@ def send_static(path):
 
 
 if __name__ == '__main__':
-    app.run(host="localhost",port=int(5000))
+    app.run(host="localhost", port=5000)
 
