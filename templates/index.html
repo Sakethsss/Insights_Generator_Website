@@ -4,24 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Insights Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/static/styles.css">
     <script src="/static/script.js"></script>
 </head>
-<body>
-    <h1>Insights Generator</h1>
-    <form id="uploadForm" action="/" method="post" enctype="multipart/form-data">
-        <input type="file" id="csvFileInput" name="file" accept=".csv" required class="csvFileInput">
-        <label for="firstParameter">Select First Parameter:</label>
-        <select id="firstParameter" name="firstParameter"></select>
-        <label for="secondParameter">Select Second Parameter:</label>
-        <select id="secondParameter" name="secondParameter"></select>
-        <button type="button" onclick="generateInsights()">Generate Insights</button>
-    </form>
-    
-    <!-- Handle error feedback from Flask -->
-    <div id="insightsError"></div>
-    
-    <!-- Update graph display logic -->
-    <div id="insightsGraph"></div>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-4">
+        <h1 class="text-3xl font-bold mb-4">Insights Generator</h1>
+        <form id="uploadForm" action="/" method="post" enctype="multipart/form-data">
+            <div class="mb-4">
+                <label for="csvFileInput" class="block font-bold mb-2">Upload CSV File:</label>
+                <input type="file" id="csvFileInput" name="file" accept=".csv" required class="p-2 border border-gray-300 rounded">
+            </div>
+            <div class="mb-4">
+                <label for="firstParameter" class="block font-bold mb-2">Select First Parameter:</label>
+                <select id="firstParameter" name="firstParameter" class="p-2 border border-gray-300 rounded">
+                    <!-- Add options here -->
+                </select>
+            </div>
+            <div class="mb-4">
+                <label for="secondParameter" class="block font-bold mb-2">Select Second Parameter:</label>
+                <select id="secondParameter" name="secondParameter" class="p-2 border border-gray-300 rounded">
+                    <!-- Add options here -->
+                </select>
+            </div>
+            <button type="button" onclick="generateInsights()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Generate Insights</button>
+        </form>
+        
+        <!-- Handle error feedback from Flask -->
+        <div id="insightsError" class="text-red-500 mt-4"></div>
+        
+        <!-- Update graph display logic -->
+        <div id="insightsGraph" class="mt-8">
+            <!-- Graph display goes here -->
+        </div>
+    </div>
 </body>
 </html>

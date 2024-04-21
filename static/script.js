@@ -57,4 +57,3 @@ function generateInsights() {
     xhr.open('POST', '/');
     xhr.send(formData);
 }
-

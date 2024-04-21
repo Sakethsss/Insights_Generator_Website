@@ -37,7 +37,7 @@ def home():
 
 def generate_insights_graph(filename, x_param, y_param):
     # Read the CSV file into a pandas DataFrame
-    data = pd.read_csv(filename, encoding='latin1')
+    data = pd.read_csv(filename, encoding='')
     # Group the data by x_param and calculate the average of y_param for each group
     average_data = data.groupby(x_param)[y_param].mean().reset_index()
     # Plot the graph
